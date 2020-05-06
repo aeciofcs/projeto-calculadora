@@ -3,6 +3,8 @@
     width: 235px; /** largura da calculadora */
     border-radius: 5px; /** Borda */
     overflow: hidden;
-    background-color: red;
-
+    /**background-color: red;*/
+    display: grid;
+    grid-template-columns: repeat(4, 25%);
+    grid-template-rows: 48px 48px 48px 48px 48px;
 }
