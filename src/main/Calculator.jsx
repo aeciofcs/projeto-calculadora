@@ -4,28 +4,54 @@ import './Calculator.css'
 import Button from '../components/Button'
 import Display from '../components/Display'
 
+const initialState = {
+    displayValue: '0', //valor que esta sendo exibido na calc
+    clearDisplay: false, //Precisa limpar ou não ?
+    operation: null, //Armazenar a Operação. + - * /
+    values: [0, 0], //Array com valor 1 e 2
+    current: 0 //Informar o Indice do array, 0 ou 1.
+}
+
 export default class Calculator extends Component {
 
+    state = { ...initialState }
+
     clearMemory(){
-        console.log('Limpar')
+        this.setState({...initialState})
     }
 
     setOperation(operation){
         console.log(operation)
     }
 
-    addDigit(n){
-        console.log(n)
+    addDigit(num){
+        //Evitar ter dois . no display da Calculadora.
+        if (num === '.' && this.state.displayValue.includes('.')){
+            return
+        }
+        const clearDisplay = this.state.displayValue === '0'
+            || this.state.clearDisplay
+        const currentValue = clearDisplay ? '' : this.state.displayValue
+        const displayValue = currentValue + num
+        this.setState({ displayValue, clearDisplay: false  })
+
+        if (num !== '.') {
+            const i = this.state.current
+            const newValue = parseFloat(displayValue)
+            const values = [...this.state.values]
+            values[i] = newValue
+            this.setState({ values })
+        }
     }
 
 
     render() {
-        const addDigit = n => this.addDigit(n)
+        const addDigit = num => this.addDigit(num)
         const setOperation = op => this.setOperation(op)
 
         return (
             <div className="calculator">
-                <Display value={100} />
+                <Display value={this.state.displayValue} />
                 <Button label="AC" triple click={ () => this.clearMemory() } />
                 <Button label="/" operation click={setOperation} />
                 <Button label="7" click={addDigit}/>
