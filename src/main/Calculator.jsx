@@ -8,7 +8,7 @@ const initialState = {
     displayValue: '0', //valor que esta sendo exibido na calc
     clearDisplay: false, //Precisa limpar ou não ?
     operation: null, //Armazenar a Operação. + - * /
-    values: [0, 0], //Array com valor 1 e 2
+    values: [0, 0], //Array com valor 1 e 2; Indices 0 e 1. Indice 2 para Percetual
     current: 0 //Informar o Indice do array, 0 ou 1.
 }
 
@@ -21,33 +21,51 @@ export default class Calculator extends Component {
     }
 
     setOperation(operation){
+
+        if (operation === '=' && this.state.operation === null) {
+            this.setState( { displayValue: 'Digite um número', clearDisplay: true } )
+            return
+        }
+        
         if (this.state.current === 0) {            
             this.setState({ operation, current: 1, clearDisplay: true })
         }else{
             const equals = operation === '='
             const currentOperation = this.state.operation
+            //console.log(currentOperation)
+            //console.log(this.state)
             const values = [...this.state.values]
             try{
+                if (operation === '%'){
+                    const Percentual = parseFloat(values[1])
+                    values[1] = parseFloat( (values[0] * (Percentual/100)).toFixed(3) )                    
+                    this.setState( { values, displayValue: values[1] } )
+                    return
+                }
+
                 switch (currentOperation) {
                     case "+":
                         values[0] = values[0] + values[1]
+                        values[1] = 0
                         break;
                     case "-":
-                        values[0] = values[0] - values[1]
+                        values[0] = parseFloat(values[0] - values[1]).toFixed(3)
+                        values[1] = 0
                         break;
                     case "*":
                         values[0] = values[0] * values[1]
+                        values[1] = 0
                         break;
                     case "/":
                         values[0] = values[0] / values[1]
-                        break;
+                        values[1] = 0
+                        break;                    
                     default:
                         break;
                 }              
             } catch{
                 values[0] = this.state.values[0]
-            }
-            values[1] = 0
+            }            
             this.setState({ 
                 displayValue: values[0],
                 operation: equals ? null : operation,
@@ -86,7 +104,7 @@ export default class Calculator extends Component {
             <div className="calculator">
                 <Display value={this.state.displayValue } />
                 <Button label="AC" double click={ () => this.clearMemory() } />
-                <Button label="%" />
+                <Button label="%"           click={setOperation} />
                 <Button label="/" operation click={setOperation} />
                 <Button label="7" click={addDigit}/>
                 <Button label="8" click={addDigit}/>
