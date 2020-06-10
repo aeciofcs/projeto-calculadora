@@ -32,8 +32,6 @@ export default class Calculator extends Component {
         }else{
             const equals = operation === '='
             const currentOperation = this.state.operation
-            //console.log(currentOperation)
-            //console.log(this.state)
             const values = [...this.state.values]
             try{
                 if (operation === '%'){
@@ -103,7 +101,8 @@ export default class Calculator extends Component {
         return (
             <div className="calculator">
                 <Display value={this.state.displayValue } />
-                <Button label="AC" double click={ () => this.clearMemory() } />
+                <Button label="AC" click={ () => this.clearMemory() } />
+                <Button label="+/-"         click={setOperation} />
                 <Button label="%"           click={setOperation} />
                 <Button label="/" operation click={setOperation} />
                 <Button label="7" click={addDigit}/>
